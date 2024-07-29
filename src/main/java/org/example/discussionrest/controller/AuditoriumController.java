@@ -1,14 +1,12 @@
 package org.example.discussionrest.controller;
 
 import lombok.AllArgsConstructor;
+import org.example.discussionrest.dto.AuditoriumCreateDto;
 import org.example.discussionrest.dto.AuditoriumReadDto;
-import org.example.discussionrest.entity.Auditorium;
 import org.example.discussionrest.exception.RecordNotFoundException;
 import org.example.discussionrest.service.AuditoriumService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,6 +16,12 @@ import java.util.List;
 public class AuditoriumController {
 
     private final AuditoriumService auditoriumService;
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    public AuditoriumReadDto insert(@RequestBody AuditoriumCreateDto auditoriumCreateDto) {
+        return auditoriumService.insertIfNotExists(auditoriumCreateDto);
+    }
 
     @GetMapping
     public List<AuditoriumReadDto> findAll() {

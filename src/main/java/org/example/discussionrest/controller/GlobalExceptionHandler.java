@@ -14,8 +14,18 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(RecordNotFoundException.class)
     public @ResponseBody ExceptionDto handleRecordNotFoundException(RecordNotFoundException ex) {
+        return buildExceptionDto(ex, HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public @ResponseBody ExceptionDto handleException(Exception ex) {
+        return buildExceptionDto(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private ExceptionDto buildExceptionDto(Exception ex, HttpStatus status) {
         return ExceptionDto.builder()
-                .status(HttpStatus.NOT_FOUND.value())
+                .status(status.value())
                 .message(ex.getMessage())
                 .timestamp(System.currentTimeMillis())
                 .build();

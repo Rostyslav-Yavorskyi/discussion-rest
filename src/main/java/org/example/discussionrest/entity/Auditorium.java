@@ -2,10 +2,8 @@ package org.example.discussionrest.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @Entity
 @Table(name = "auditorium")
 public class Auditorium {

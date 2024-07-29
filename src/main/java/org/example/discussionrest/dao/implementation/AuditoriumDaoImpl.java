@@ -31,6 +31,15 @@ public class AuditoriumDaoImpl implements AuditoriumDao {
     }
 
     @Override
+    public Optional<Auditorium> findByNumber(int number) {
+        return entityManager.createQuery("from Auditorium where number = :number", Auditorium.class)
+                .setParameter("number", number)
+                .setMaxResults(1)
+                .getResultStream()
+                .findFirst();
+    }
+
+    @Override
     public boolean remove(int id) {
         int rows = entityManager.createQuery("delete from Auditorium where id = :id")
                 .setParameter("id", id)
