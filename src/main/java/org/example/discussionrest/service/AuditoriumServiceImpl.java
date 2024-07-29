@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.discussionrest.dao.AuditoriumDao;
 import org.example.discussionrest.dto.AuditoriumCreateDto;
 import org.example.discussionrest.dto.AuditoriumReadDto;
+import org.example.discussionrest.dto.AuditoriumUpdateDto;
 import org.example.discussionrest.entity.Auditorium;
 import org.example.discussionrest.exception.AuditoriumNotFoundException;
 import org.example.discussionrest.mapper.AuditoriumMapper;
@@ -40,8 +41,19 @@ public class AuditoriumServiceImpl implements AuditoriumService {
 
     @Override
     public AuditoriumReadDto findOne(int id) throws AuditoriumNotFoundException {
-        Auditorium auditorium = auditoriumDao.findOne(id).orElseThrow(() -> new AuditoriumNotFoundException(id));
+        Auditorium auditorium = findByIdOrElseThrowException(id);
         return auditoriumMapper.toReadDto(auditorium);
+    }
+
+    private Auditorium findByIdOrElseThrowException(int id) throws AuditoriumNotFoundException {
+        return auditoriumDao.findOne(id).orElseThrow(() -> new AuditoriumNotFoundException(id));
+    }
+
+    @Override
+    @Transactional
+    public void update(int id, AuditoriumUpdateDto auditoriumUpdateDto) throws AuditoriumNotFoundException {
+        Auditorium auditorium = findByIdOrElseThrowException(id);
+        auditoriumMapper.update(auditorium, auditoriumUpdateDto);
     }
 
     @Override

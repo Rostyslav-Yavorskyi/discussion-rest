@@ -22,7 +22,7 @@ public class AuditoriumDaoImpl implements AuditoriumDao {
 
     @Override
     public List<Auditorium> findAll() {
-        return entityManager.createQuery("from Auditorium", Auditorium.class).getResultList();
+        return entityManager.createQuery("from Auditorium order by id", Auditorium.class).getResultList();
     }
 
     @Override

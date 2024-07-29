@@ -3,6 +3,7 @@ package org.example.discussionrest.controller;
 import lombok.AllArgsConstructor;
 import org.example.discussionrest.dto.AuditoriumCreateDto;
 import org.example.discussionrest.dto.AuditoriumReadDto;
+import org.example.discussionrest.dto.AuditoriumUpdateDto;
 import org.example.discussionrest.exception.AuditoriumNotFoundException;
 import org.example.discussionrest.service.AuditoriumService;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,12 @@ public class AuditoriumController {
     @GetMapping("/{id}")
     public AuditoriumReadDto findById(@PathVariable int id) throws AuditoriumNotFoundException {
         return auditoriumService.findOne(id);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/{id}")
+    public void update(@PathVariable int id, @RequestBody AuditoriumUpdateDto auditoriumUpdateDto) throws AuditoriumNotFoundException {
+        auditoriumService.update(id, auditoriumUpdateDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
