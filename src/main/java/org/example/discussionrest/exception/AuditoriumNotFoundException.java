@@ -5,6 +5,6 @@ import org.example.discussionrest.entity.Auditorium;
 public class AuditoriumNotFoundException extends RecordNotFoundException{
 
     public AuditoriumNotFoundException(long id) {
-        super(Auditorium.class.getName(), id);
+        super(Auditorium.class, id);
     }
 }
