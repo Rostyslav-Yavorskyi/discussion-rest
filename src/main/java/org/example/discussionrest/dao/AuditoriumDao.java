@@ -15,5 +15,5 @@ public interface AuditoriumDao {
 
     Optional<Auditorium> findByNumber(int number);
 
-    boolean remove(int id);
+    boolean delete(int id);
 }

@@ -40,7 +40,7 @@ public class AuditoriumDaoImpl implements AuditoriumDao {
     }
 
     @Override
-    public boolean remove(int id) {
+    public boolean delete(int id) {
         int rows = entityManager.createQuery("delete from Auditorium where id = :id")
                 .setParameter("id", id)
                 .executeUpdate();

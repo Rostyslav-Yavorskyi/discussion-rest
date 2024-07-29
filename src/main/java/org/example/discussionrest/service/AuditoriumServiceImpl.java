@@ -7,7 +7,6 @@ import org.example.discussionrest.dto.AuditoriumCreateDto;
 import org.example.discussionrest.dto.AuditoriumReadDto;
 import org.example.discussionrest.entity.Auditorium;
 import org.example.discussionrest.exception.AuditoriumNotFoundException;
-import org.example.discussionrest.exception.RecordNotFoundException;
 import org.example.discussionrest.mapper.AuditoriumMapper;
 import org.springframework.stereotype.Service;
 
@@ -40,8 +39,16 @@ public class AuditoriumServiceImpl implements AuditoriumService {
     }
 
     @Override
-    public AuditoriumReadDto findOne(int id) throws RecordNotFoundException {
+    public AuditoriumReadDto findOne(int id) throws AuditoriumNotFoundException {
         Auditorium auditorium = auditoriumDao.findOne(id).orElseThrow(() -> new AuditoriumNotFoundException(id));
         return auditoriumMapper.toReadDto(auditorium);
+    }
+
+    @Override
+    @Transactional
+    public void delete(int id) throws AuditoriumNotFoundException {
+        if (!auditoriumDao.delete(id)) {
+            throw new AuditoriumNotFoundException(id);
+        }
     }
 }
