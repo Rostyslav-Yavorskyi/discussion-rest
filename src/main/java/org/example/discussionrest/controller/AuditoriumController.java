@@ -1,6 +1,7 @@
 package org.example.discussionrest.controller;
 
 import lombok.AllArgsConstructor;
+import org.example.discussionrest.dto.AuditoriumReadDto;
 import org.example.discussionrest.entity.Auditorium;
 import org.example.discussionrest.exception.RecordNotFoundException;
 import org.example.discussionrest.service.AuditoriumService;
@@ -19,12 +20,12 @@ public class AuditoriumController {
     private final AuditoriumService auditoriumService;
 
     @GetMapping
-    public List<Auditorium> findAll() {
+    public List<AuditoriumReadDto> findAll() {
         return auditoriumService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Auditorium findById(@PathVariable int id) throws RecordNotFoundException {
+    public AuditoriumReadDto findById(@PathVariable int id) throws RecordNotFoundException {
         return auditoriumService.findOne(id);
     }
 }

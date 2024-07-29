@@ -1,13 +1,13 @@
 package org.example.discussionrest.service;
 
-import org.example.discussionrest.entity.Auditorium;
+import org.example.discussionrest.dto.AuditoriumReadDto;
 import org.example.discussionrest.exception.RecordNotFoundException;
 
 import java.util.List;
 
 public interface AuditoriumService {
 
-    List<Auditorium> findAll();
+    List<AuditoriumReadDto> findAll();
 
-    Auditorium findOne(int id) throws RecordNotFoundException;
+    AuditoriumReadDto findOne(int id) throws RecordNotFoundException;
 }
