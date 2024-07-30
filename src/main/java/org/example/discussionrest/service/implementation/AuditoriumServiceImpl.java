@@ -1,4 +1,4 @@
-package org.example.discussionrest.service;
+package org.example.discussionrest.service.implementation;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +9,7 @@ import org.example.discussionrest.dto.AuditoriumUpdateDto;
 import org.example.discussionrest.entity.Auditorium;
 import org.example.discussionrest.exception.AuditoriumNotFoundException;
 import org.example.discussionrest.mapper.AuditoriumMapper;
+import org.example.discussionrest.service.AuditoriumService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
