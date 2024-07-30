@@ -2,7 +2,7 @@ package org.example.discussionrest.service.implementation;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import org.example.discussionrest.entity.MyUserDetails;
+import org.example.discussionrest.entity.User;
 import org.example.discussionrest.service.JwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -11,8 +11,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 @Service
@@ -25,7 +23,7 @@ public class JwtServiceImpl implements JwtService {
     private String ALGORITHM;
 
     @Override
-    public String extractUserEmail(String token) {
+    public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -43,26 +41,18 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String generateToken(MyUserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("id", userDetails.getUser().getId());
-        claims.put("role", userDetails.getUser().getRole());
-        return generateToken(claims, userDetails);
-    }
-
-    private String generateToken(Map<String, Object> extraClaims, MyUserDetails userDetails) {
+    public String generateToken(User user) {
         return Jwts.builder()
-                .claims(extraClaims)
-                .subject(userDetails.getUsername())
+                .subject(user.getEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 100000 * 60 * 24))
                 .signWith(getSigningKey()).compact();
     }
 
     @Override
-    public boolean isTokenValid(String token, MyUserDetails userDetails) {
-        final String userEmail = extractUserEmail(token);
-        return (userEmail.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    public boolean isTokenValid(String token, User user) {
+        final String email = extractEmail(token);
+        return (email.equals(user.getEmail())) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

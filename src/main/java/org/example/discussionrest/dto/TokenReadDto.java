@@ -1,8 +1,10 @@
 package org.example.discussionrest.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class UserSignInJwtResponse {
+@AllArgsConstructor
+public class TokenReadDto {
     private String token;
 }
