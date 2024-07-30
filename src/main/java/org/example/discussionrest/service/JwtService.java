@@ -1,10 +1,10 @@
 package org.example.discussionrest.service;
 
-import org.example.discussionrest.entity.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public interface JwtService {
     String extractEmail(String token);
-    String generateToken(User userDetails);
-    boolean isTokenValid(String token, User userDetails);
+    String generateToken(UserDetails userDetails);
+    boolean isTokenValid(String token, UserDetails userDetails);
 
 }
