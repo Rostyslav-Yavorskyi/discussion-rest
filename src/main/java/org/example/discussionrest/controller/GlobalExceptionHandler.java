@@ -2,6 +2,7 @@ package org.example.discussionrest.controller;
 
 import org.example.discussionrest.dto.ExceptionDto;
 import org.example.discussionrest.exception.RecordNotFoundException;
+import org.example.discussionrest.exception.UserAlreadyRegisteredException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +16,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RecordNotFoundException.class)
     public @ResponseBody ExceptionDto handleRecordNotFoundException(RecordNotFoundException ex) {
         return buildExceptionDto(ex, HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(UserAlreadyRegisteredException.class)
+    public @ResponseBody ExceptionDto handleUserAlreadyRegisteredException(UserAlreadyRegisteredException ex) {
+        return buildExceptionDto(ex, HttpStatus.CONFLICT);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

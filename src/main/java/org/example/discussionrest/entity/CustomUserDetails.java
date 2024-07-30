@@ -2,6 +2,7 @@ package org.example.discussionrest.entity;
 
 import lombok.Getter;
 import org.example.discussionrest.dto.UserLoginDto;
+import org.example.discussionrest.dto.UserRegisterDto;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -24,6 +25,11 @@ public class CustomUserDetails implements UserDetails {
     public CustomUserDetails(UserLoginDto userLoginDto) {
         username = userLoginDto.getEmail();
         password = userLoginDto.getPassword();
+    }
+
+    public CustomUserDetails(UserRegisterDto userRegisterDto) {
+        username = userRegisterDto.getEmail();
+        password = userRegisterDto.getPassword();
     }
 
     @Override

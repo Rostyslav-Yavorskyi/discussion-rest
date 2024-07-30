@@ -15,6 +15,11 @@ public class UserDaoImpl implements UserDao {
     private final EntityManager entityManager;
 
     @Override
+    public void insert(User user) {
+        entityManager.persist(user);
+    }
+
+    @Override
     public Optional<User> findByEmail(String email) {
         return entityManager.createQuery("from User where email = :email", User.class)
                 .setParameter("email", email)
