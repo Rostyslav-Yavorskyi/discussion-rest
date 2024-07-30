@@ -9,6 +9,9 @@ import org.example.discussionrest.dto.AuditoriumUpdateDto;
 import org.example.discussionrest.entity.Auditorium;
 import org.example.discussionrest.exception.AuditoriumNotFoundException;
 import org.example.discussionrest.mapper.AuditoriumMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,6 +43,7 @@ public class AuditoriumServiceImpl implements AuditoriumService {
     }
 
     @Override
+    @Cacheable("auditorium")
     public AuditoriumReadDto findOne(int id) throws AuditoriumNotFoundException {
         Auditorium auditorium = findByIdOrElseThrowException(id);
         return auditoriumMapper.toReadDto(auditorium);
@@ -51,13 +55,16 @@ public class AuditoriumServiceImpl implements AuditoriumService {
 
     @Override
     @Transactional
-    public void update(int id, AuditoriumUpdateDto auditoriumUpdateDto) throws AuditoriumNotFoundException {
+    @CachePut(value = "auditorium", key = "#id")
+    public AuditoriumReadDto update(int id, AuditoriumUpdateDto auditoriumUpdateDto) throws AuditoriumNotFoundException {
         Auditorium auditorium = findByIdOrElseThrowException(id);
         auditoriumMapper.update(auditorium, auditoriumUpdateDto);
+        return auditoriumMapper.toReadDto(auditorium);
     }
 
     @Override
     @Transactional
+    @CacheEvict("auditorium")
     public void delete(int id) throws AuditoriumNotFoundException {
         if (!auditoriumDao.delete(id)) {
             throw new AuditoriumNotFoundException(id);

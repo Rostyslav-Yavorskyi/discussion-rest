@@ -15,7 +15,7 @@ public interface AuditoriumService {
 
     AuditoriumReadDto findOne(int id) throws AuditoriumNotFoundException;
 
-    void update(int id, AuditoriumUpdateDto auditoriumUpdateDto) throws AuditoriumNotFoundException;
+    AuditoriumReadDto update(int id, AuditoriumUpdateDto auditoriumUpdateDto) throws AuditoriumNotFoundException;
 
     void delete(int id) throws AuditoriumNotFoundException;
 }
