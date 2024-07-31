@@ -2,9 +2,12 @@ package org.example.discussionrest.service.implementation;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.example.discussionrest.dto.TokenReadDto;
+import org.example.discussionrest.dto.UserLoginDto;
+import org.example.discussionrest.dto.UserRegisterDto;
+import org.example.discussionrest.entity.User;
 import org.example.discussionrest.service.JwtService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -41,18 +44,27 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String generateToken(UserDetails user) {
+    public TokenReadDto generateToken(UserRegisterDto userRegisterDto) {
+        return new TokenReadDto(createToken(userRegisterDto.getEmail()));
+    }
+
+    @Override
+    public TokenReadDto generateToken(UserLoginDto userLoginDto) {
+        return new TokenReadDto(createToken(userLoginDto.getEmail()));
+    }
+
+    private String createToken(String subject) {
         return Jwts.builder()
-                .subject(user.getUsername())
+                .subject(subject)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 100000 * 60 * 24))
                 .signWith(getSigningKey()).compact();
     }
 
     @Override
-    public boolean isTokenValid(String token, UserDetails userDetails) {
+    public boolean isTokenValid(String token, User user) {
         final String email = extractEmail(token);
-        return email.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        return email.equals(user.getEmail()) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

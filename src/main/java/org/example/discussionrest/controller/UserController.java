@@ -3,15 +3,18 @@ package org.example.discussionrest.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.discussionrest.dto.TokenReadDto;
 import org.example.discussionrest.dto.UserLoginDto;
+import org.example.discussionrest.dto.UserReadDto;
 import org.example.discussionrest.dto.UserRegisterDto;
-import org.example.discussionrest.entity.CustomUserDetails;
+import org.example.discussionrest.entity.User;
 import org.example.discussionrest.exception.UserAlreadyRegisteredException;
+import org.example.discussionrest.mapper.UserMapper;
 import org.example.discussionrest.service.JwtService;
 import org.example.discussionrest.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,10 +26,12 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @GetMapping("/me")
-    public String getMe() {
-        return "Hello World";
+    public UserReadDto getMe() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userMapper.toReadDto(user);
     }
 
     @PostMapping("/login")
@@ -34,7 +39,7 @@ public class UserController {
         Authentication authentication = new UsernamePasswordAuthenticationToken(userLoginDto.getEmail(), userLoginDto.getPassword());
         authentication = authenticationManager.authenticate(authentication);
         if (authentication.isAuthenticated()) {
-            return new TokenReadDto(jwtService.generateToken(new CustomUserDetails(userLoginDto)));
+            return jwtService.generateToken(userLoginDto);
         }
 
         throw new UsernameNotFoundException("Invalid email or password");
@@ -44,6 +49,6 @@ public class UserController {
     @PostMapping("/register")
     public TokenReadDto register(@RequestBody UserRegisterDto userRegisterDto) throws UserAlreadyRegisteredException {
         userService.register(userRegisterDto);
-        return new TokenReadDto(jwtService.generateToken(new CustomUserDetails(userRegisterDto)));
+        return jwtService.generateToken(userRegisterDto);
     }
 }

@@ -2,8 +2,10 @@ package org.example.discussionrest.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString(exclude = "password")
 @Entity
 @Table(name = "user")
 public class User {

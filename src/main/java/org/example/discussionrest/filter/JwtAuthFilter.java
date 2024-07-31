@@ -7,16 +7,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.example.discussionrest.entity.User;
 import org.example.discussionrest.service.JwtService;
+import org.example.discussionrest.service.UserService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 
 @Component
 @AllArgsConstructor
@@ -25,7 +28,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     public static final String BEARER_PREFIX = "Bearer ";
     public static final String HEADER_NAME = "Authorization";
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final UserService userService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
@@ -39,9 +42,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String email = jwtService.extractEmail(jwt);
 
         if (needAuthentication(email)) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                applyAuthentication(request, userDetails);
+            User user = userService.findByEmail(email);
+            if (jwtService.isTokenValid(jwt, user)) {
+                applyAuthentication(request, user);
             }
         }
         filterChain.doFilter(request, response);
@@ -67,9 +70,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         return StringUtils.isNotEmpty(email);
     }
 
-    private void applyAuthentication(HttpServletRequest request, UserDetails userDetails) {
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    private void applyAuthentication(HttpServletRequest request, User user) {
+        Collection<? extends GrantedAuthority> authorities = getAuthorities(user);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, authorities);
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);
+    }
+
+    private Collection<? extends GrantedAuthority> getAuthorities(User user) {
+        return Collections.singletonList(() -> user.getRole().name());
     }
 }
