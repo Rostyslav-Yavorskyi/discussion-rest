@@ -33,6 +33,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User findByEmail(String email) throws UsernameNotFoundException {
-        return userDao.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return userDao.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Authentication failed"));
     }
 }

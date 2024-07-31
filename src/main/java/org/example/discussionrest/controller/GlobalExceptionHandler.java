@@ -4,6 +4,7 @@ import org.example.discussionrest.dto.ExceptionDto;
 import org.example.discussionrest.exception.RecordNotFoundException;
 import org.example.discussionrest.exception.UserAlreadyRegisteredException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,6 +23,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserAlreadyRegisteredException.class)
     public @ResponseBody ExceptionDto handleUserAlreadyRegisteredException(UserAlreadyRegisteredException ex) {
         return buildExceptionDto(ex, HttpStatus.CONFLICT);
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public @ResponseBody ExceptionDto handleUsernameNotFoundException(UsernameNotFoundException ex) {
+        return buildExceptionDto(ex, HttpStatus.UNAUTHORIZED);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
