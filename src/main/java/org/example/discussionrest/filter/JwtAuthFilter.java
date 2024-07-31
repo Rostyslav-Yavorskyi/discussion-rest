@@ -11,6 +11,7 @@ import lombok.NonNull;
 import org.example.discussionrest.controller.GlobalExceptionHandler;
 import org.example.discussionrest.dto.ExceptionDto;
 import org.example.discussionrest.entity.User;
+import org.example.discussionrest.exception.TokenExpiredException;
 import org.example.discussionrest.service.JwtService;
 import org.example.discussionrest.service.UserService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,13 +50,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             if (needAuthentication(email)) {
                 User user = userService.findByEmail(email);
-                if (jwtService.isTokenValid(jwt, user)) {
-                    applyAuthentication(request, user);
+                if (jwtService.isTokenInvalid(jwt, user)) {
+                    throw new TokenExpiredException();
                 }
+                applyAuthentication(request, user);
             }
             filterChain.doFilter(request, response);
         } catch (UsernameNotFoundException ex) {
             handleException(globalExceptionHandler::handleUsernameNotFoundException, ex, response);
+        } catch (TokenExpiredException ex) {
+            handleException(globalExceptionHandler::handleTokenExpiredException, ex, response);
         }
     }
 

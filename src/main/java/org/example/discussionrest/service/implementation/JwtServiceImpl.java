@@ -57,14 +57,14 @@ public class JwtServiceImpl implements JwtService {
         return Jwts.builder()
                 .subject(subject)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 100000 * 60 * 24))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 .signWith(getSigningKey()).compact();
     }
 
     @Override
-    public boolean isTokenValid(String token, User user) {
+    public boolean isTokenInvalid(String token, User user) {
         final String email = extractEmail(token);
-        return email.equals(user.getEmail()) && !isTokenExpired(token);
+        return isTokenExpired(token) || !email.equals(user.getEmail());
     }
 
     private boolean isTokenExpired(String token) {

@@ -9,6 +9,6 @@ public interface JwtService {
     String extractEmail(String token);
     TokenReadDto generateToken(UserLoginDto userLoginDto);
     TokenReadDto generateToken(UserRegisterDto userRegisterDto);
-    boolean isTokenValid(String token, User User);
+    boolean isTokenInvalid(String token, User User);
 
 }
