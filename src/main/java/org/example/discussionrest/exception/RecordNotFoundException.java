@@ -5,4 +5,8 @@ public class RecordNotFoundException extends Exception {
     public RecordNotFoundException(Class<?> entityClass, long id) {
         super(String.format("Record with id %d not found for entity %s", id, entityClass.getSimpleName()));
     }
+
+    public RecordNotFoundException(String message) {
+        super(message);
+    }
 }

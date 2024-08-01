@@ -3,6 +3,8 @@ package org.example.discussionrest.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.discussionrest.dto.*;
 import org.example.discussionrest.entity.User;
+import org.example.discussionrest.exception.DiscussionNotFoundException;
+import org.example.discussionrest.exception.UserAlreadyJoinedToDiscussionException;
 import org.example.discussionrest.exception.UserAlreadyRegisteredException;
 import org.example.discussionrest.exception.UserNotFoundException;
 import org.example.discussionrest.mapper.UserMapper;
@@ -47,6 +49,12 @@ public class UserController {
         return jwtService.generateToken(userRegisterDto);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping("/discussion/{id}")
+    public void joinToDiscussion(@PathVariable int id) throws DiscussionNotFoundException, UserAlreadyJoinedToDiscussionException {
+        userService.joinToDiscussion(id);
+    }
+
     @GetMapping("/me")
     public UserReadDto getMe() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -77,5 +85,11 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable int id) throws UserNotFoundException {
         userService.delete(id);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/discussion/{id}")
+    public void leaveFromDiscussion(@PathVariable int id) throws DiscussionNotFoundException {
+        userService.leaveFromDiscussion(id);
     }
 }

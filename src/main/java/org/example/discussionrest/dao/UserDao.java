@@ -15,5 +15,7 @@ public interface UserDao {
 
     Optional<User> findByEmail(String email);
 
+    void update(User user);
+
     boolean delete(int id);
 }

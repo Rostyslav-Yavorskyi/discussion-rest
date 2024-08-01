@@ -4,6 +4,8 @@ import org.example.discussionrest.dto.UserReadDto;
 import org.example.discussionrest.dto.UserRegisterDto;
 import org.example.discussionrest.dto.UserUpdateDto;
 import org.example.discussionrest.entity.User;
+import org.example.discussionrest.exception.DiscussionNotFoundException;
+import org.example.discussionrest.exception.UserAlreadyJoinedToDiscussionException;
 import org.example.discussionrest.exception.UserAlreadyRegisteredException;
 import org.example.discussionrest.exception.UserNotFoundException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,5 +19,7 @@ public interface UserService {
     UserReadDto findOne(int id) throws UserNotFoundException;
     User findByEmail(String email) throws UsernameNotFoundException;
     void update(int id, UserUpdateDto userUpdateDto) throws UserNotFoundException;
+    void joinToDiscussion(int discussionId) throws DiscussionNotFoundException, UserAlreadyJoinedToDiscussionException;
+    void leaveFromDiscussion(int discussionId) throws DiscussionNotFoundException;
     void delete(int id) throws UserNotFoundException;
 }

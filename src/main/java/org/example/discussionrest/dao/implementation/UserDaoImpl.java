@@ -40,6 +40,11 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public void update(User user) {
+        entityManager.merge(user);
+    }
+
+    @Override
     public boolean delete(int id) {
         int rows = entityManager.createQuery("delete from User where id = :id")
                 .setParameter("id", id)

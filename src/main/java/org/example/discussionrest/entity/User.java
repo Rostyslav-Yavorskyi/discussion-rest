@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @ToString(exclude = "password")
 @Entity
@@ -28,6 +31,25 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_discussion",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "discussion_id"))
+    private List<Discussion> discussions = new ArrayList<>();
+
+    public void addDiscussion(Discussion discussion) {
+        discussions.add(discussion);
+    }
+
+    public boolean removeDiscussion(Discussion discussion) {
+        return discussions.remove(discussion);
+    }
+
+    public boolean discussionExists(Discussion discussion) {
+        return discussions.contains(discussion);
+    }
 
     public enum Role {
         USER,

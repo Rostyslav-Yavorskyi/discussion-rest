@@ -2,15 +2,18 @@ package org.example.discussionrest.service.implementation;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.example.discussionrest.dao.UserDao;
 import org.example.discussionrest.dto.UserReadDto;
 import org.example.discussionrest.dto.UserRegisterDto;
 import org.example.discussionrest.dto.UserUpdateDto;
+import org.example.discussionrest.entity.Discussion;
 import org.example.discussionrest.entity.User;
+import org.example.discussionrest.exception.DiscussionNotFoundException;
+import org.example.discussionrest.exception.UserAlreadyJoinedToDiscussionException;
 import org.example.discussionrest.exception.UserAlreadyRegisteredException;
 import org.example.discussionrest.exception.UserNotFoundException;
 import org.example.discussionrest.mapper.UserMapper;
 import org.example.discussionrest.service.UserService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +21,8 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends BaseService implements UserService {
 
-    private final UserDao userDao;
     private final UserMapper userMapper;
 
     @Override
@@ -42,12 +44,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserReadDto findOne(int id) throws UserNotFoundException {
-        User user = findByIdOrElseThrowException(id);
+        User user = findUserByIdOrElseThrowException(id);
         return userMapper.toReadDto(user);
-    }
-
-    private User findByIdOrElseThrowException(int id) throws UserNotFoundException {
-        return userDao.findOne(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
     @Override
@@ -59,8 +57,32 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void update(int id, UserUpdateDto userUpdateDto) throws UserNotFoundException {
-        User user = findByIdOrElseThrowException(id);
+        User user = findUserByIdOrElseThrowException(id);
         userMapper.update(user, userUpdateDto);
+    }
+
+    @Override
+    @Transactional
+    public void joinToDiscussion(int discussionId) throws DiscussionNotFoundException, UserAlreadyJoinedToDiscussionException {
+        Discussion discussion = findDiscussionByIdOrElseThrowException(discussionId);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (user.discussionExists(discussion)) {
+            throw new UserAlreadyJoinedToDiscussionException("Already joined");
+        }
+        user.addDiscussion(discussion);
+        userDao.update(user);
+    }
+
+    @Override
+    @Transactional
+    public void leaveFromDiscussion(int discussionId) throws DiscussionNotFoundException {
+        Discussion discussion = findDiscussionByIdOrElseThrowException(discussionId);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boolean deleted = user.removeDiscussion(discussion);
+        if (!deleted) {
+            throw new DiscussionNotFoundException(discussion.getId(), user.getId());
+        }
+        userDao.update(user);
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.example.discussionrest.controller;
 import org.example.discussionrest.dto.ExceptionDto;
 import org.example.discussionrest.exception.RecordNotFoundException;
 import org.example.discussionrest.exception.TokenExpiredException;
+import org.example.discussionrest.exception.UserAlreadyJoinedToDiscussionException;
 import org.example.discussionrest.exception.UserAlreadyRegisteredException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,6 +31,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UsernameNotFoundException.class)
     public @ResponseBody ExceptionDto handleUsernameNotFoundException(UsernameNotFoundException ex) {
         return buildExceptionDto(ex, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(UserAlreadyJoinedToDiscussionException.class)
+    public @ResponseBody ExceptionDto handleUserAlreadyJoinedToDiscussionException(UserAlreadyJoinedToDiscussionException ex) {
+        return buildExceptionDto(ex, HttpStatus.CONFLICT);
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
