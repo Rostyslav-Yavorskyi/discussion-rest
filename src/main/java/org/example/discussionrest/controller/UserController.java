@@ -61,7 +61,7 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{id}")
-    public UserReadDto findById(@PathVariable int id) throws UserNotFoundException {
+    public UserReadDto findOne(@PathVariable int id) throws UserNotFoundException {
         return userService.findOne(id);
     }
 

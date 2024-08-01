@@ -34,7 +34,7 @@ public class AuditoriumController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{id}")
-    public AuditoriumReadDto findById(@PathVariable int id) throws AuditoriumNotFoundException {
+    public AuditoriumReadDto findOne(@PathVariable int id) throws AuditoriumNotFoundException {
         return auditoriumService.findOne(id);
     }
 
