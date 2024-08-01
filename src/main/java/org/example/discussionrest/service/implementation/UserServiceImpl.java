@@ -29,7 +29,7 @@ public class UserServiceImpl extends BaseService implements UserService {
     @Transactional
     public void register(UserRegisterDto userRegisterDto) throws UserAlreadyRegisteredException {
         if (userDao.findByEmail(userRegisterDto.getEmail()).isPresent()) {
-            throw new UserAlreadyRegisteredException(userRegisterDto.getEmail());
+            throw createUserAlreadyRegisteredException(userRegisterDto.getEmail());
         }
 
         User user = userMapper.toEntity(userRegisterDto);
@@ -67,7 +67,7 @@ public class UserServiceImpl extends BaseService implements UserService {
         Discussion discussion = findDiscussionByIdOrElseThrowException(discussionId);
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (user.discussionExists(discussion)) {
-            throw new UserAlreadyJoinedToDiscussionException("Already joined");
+            throw createUserAlreadyJoinedToDiscussionException();
         }
         user.addDiscussion(discussion);
         userDao.update(user);
@@ -80,7 +80,7 @@ public class UserServiceImpl extends BaseService implements UserService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean deleted = user.removeDiscussion(discussion);
         if (!deleted) {
-            throw new DiscussionNotFoundException(discussion.getId(), user.getId());
+            throw createDiscussionNotFoundExceptionWithUserId(discussion.getId(), user.getId());
         }
         userDao.update(user);
     }
@@ -89,7 +89,7 @@ public class UserServiceImpl extends BaseService implements UserService {
     @Transactional
     public void delete(int id) throws UserNotFoundException {
         if (!userDao.delete(id)) {
-            throw new UserNotFoundException(id);
+            throw createUserNotFoundException(id);
         }
     }
 }

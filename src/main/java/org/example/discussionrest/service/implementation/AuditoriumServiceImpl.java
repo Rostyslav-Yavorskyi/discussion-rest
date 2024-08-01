@@ -2,7 +2,6 @@ package org.example.discussionrest.service.implementation;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.example.discussionrest.dao.AuditoriumDao;
 import org.example.discussionrest.dto.AuditoriumCreateDto;
 import org.example.discussionrest.dto.AuditoriumReadDto;
 import org.example.discussionrest.dto.AuditoriumUpdateDto;
@@ -20,9 +19,8 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class AuditoriumServiceImpl implements AuditoriumService {
+public class AuditoriumServiceImpl extends BaseService implements AuditoriumService {
 
-    private final AuditoriumDao auditoriumDao;
     private final AuditoriumMapper auditoriumMapper;
 
     @Override
@@ -46,19 +44,15 @@ public class AuditoriumServiceImpl implements AuditoriumService {
     @Override
     @Cacheable("auditorium")
     public AuditoriumReadDto findOne(int id) throws AuditoriumNotFoundException {
-        Auditorium auditorium = findByIdOrElseThrowException(id);
+        Auditorium auditorium = findAuditoriumByIdOrElseThrowException(id);
         return auditoriumMapper.toReadDto(auditorium);
-    }
-
-    private Auditorium findByIdOrElseThrowException(int id) throws AuditoriumNotFoundException {
-        return auditoriumDao.findOne(id).orElseThrow(() -> new AuditoriumNotFoundException(id));
     }
 
     @Override
     @Transactional
     @CachePut(value = "auditorium", key = "#id")
     public AuditoriumReadDto update(int id, AuditoriumUpdateDto auditoriumUpdateDto) throws AuditoriumNotFoundException {
-        Auditorium auditorium = findByIdOrElseThrowException(id);
+        Auditorium auditorium = findAuditoriumByIdOrElseThrowException(id);
         auditoriumMapper.update(auditorium, auditoriumUpdateDto);
         return auditoriumMapper.toReadDto(auditorium);
     }
@@ -68,7 +62,7 @@ public class AuditoriumServiceImpl implements AuditoriumService {
     @CacheEvict("auditorium")
     public void delete(int id) throws AuditoriumNotFoundException {
         if (!auditoriumDao.delete(id)) {
-            throw new AuditoriumNotFoundException(id);
+            throw createAuditoriumNotFoundException(id);
         }
     }
 }
