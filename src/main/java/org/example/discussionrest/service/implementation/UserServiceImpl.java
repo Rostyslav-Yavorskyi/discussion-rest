@@ -45,7 +45,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 
     @Override
     public List<UserReadDto> findAllByDiscussionId(int discussionId) throws DiscussionNotFoundException {
-        return userMapper.toReadDto(findDiscussionByIdOrElseThrowException(discussionId).getUsers());
+        return userMapper.toReadDto(findDiscussionByIdWithUsersOrElseThrowException(discussionId).getUsers());
     }
 
     @Override
@@ -73,12 +73,11 @@ public class UserServiceImpl extends BaseService implements UserService {
     public void joinToDiscussion(int discussionId) throws DiscussionNotFoundException, UserAlreadyJoinedToDiscussionException, UserNotFoundException {
         Discussion discussion = findDiscussionByIdOrElseThrowException(discussionId);
         UserInternalDto userInternalDto = (UserInternalDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = findUserByIdOrElseThrowException(userInternalDto.getId());
+        User user = findUserByIdWithDiscussionsOrElseThrowException(userInternalDto.getId());
         if (user.discussionExists(discussion)) {
             throw createUserAlreadyJoinedToDiscussionException();
         }
         user.addDiscussion(discussion);
-        userDao.update(user);
     }
 
     @Override
@@ -86,12 +85,11 @@ public class UserServiceImpl extends BaseService implements UserService {
     public void leaveFromDiscussion(int discussionId) throws DiscussionNotFoundException, UserNotFoundException {
         Discussion discussion = findDiscussionByIdOrElseThrowException(discussionId);
         UserInternalDto userInternalDto = (UserInternalDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = findUserByIdOrElseThrowException(userInternalDto.getId());
+        User user = findUserByIdWithDiscussionsOrElseThrowException(userInternalDto.getId());
         boolean deleted = user.removeDiscussion(discussion);
         if (!deleted) {
             throw createDiscussionNotFoundExceptionWithUserId(discussion.getId(), user.getId());
         }
-        userDao.update(user);
     }
 
     @Override

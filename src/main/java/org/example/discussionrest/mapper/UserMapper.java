@@ -9,6 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -18,6 +19,8 @@ public interface UserMapper {
     UserReadDto toReadDto(User user);
 
     List<UserReadDto> toReadDto(List<User> users);
+
+    List<UserReadDto> toReadDto(Set<User> users);
 
     UserInternalDto toInternalDto(User user);
 

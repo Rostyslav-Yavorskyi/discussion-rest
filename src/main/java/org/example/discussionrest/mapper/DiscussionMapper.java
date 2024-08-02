@@ -8,6 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring", uses = {AuditoriumMapper.class})
 public interface DiscussionMapper {
@@ -17,6 +18,8 @@ public interface DiscussionMapper {
     DiscussionReadDto toReadDto(Discussion discussion);
 
     List<DiscussionReadDto> toReadDto(List<Discussion> discussion);
+
+    List<DiscussionReadDto> toReadDto(Set<Discussion> discussion);
 
     void update(@MappingTarget Discussion discussion, DiscussionUpdateDto discussionUpdateDto);
 }

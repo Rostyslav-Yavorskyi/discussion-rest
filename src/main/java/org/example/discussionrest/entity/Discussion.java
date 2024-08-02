@@ -2,15 +2,25 @@ package org.example.discussionrest.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
-@ToString(exclude = "users")
+@ToString(exclude = {"users", "auditorium"})
+@EqualsAndHashCode(exclude = {"users", "auditorium"})
 @Entity
 @Table(name = "discussion")
+@NamedEntityGraph(
+        name = "withAuditorium",
+        attributeNodes = @NamedAttributeNode("auditorium")
+)
+@NamedEntityGraph(
+        name = "withUsers",
+        attributeNodes = @NamedAttributeNode("users")
+)
 public class Discussion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,10 +29,10 @@ public class Discussion {
     @Column(name = "topic", nullable = false)
     private String topic;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auditorium_id", nullable = false)
     private Auditorium auditorium;
 
     @ManyToMany(mappedBy = "discussions")
-    private List<User> users = new ArrayList<>();
+    private Set<User> users = new HashSet<>();
 }

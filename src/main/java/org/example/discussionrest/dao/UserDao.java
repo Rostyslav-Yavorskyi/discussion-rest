@@ -13,6 +13,10 @@ public interface UserDao {
 
     Optional<User> findOne(int id);
 
+    Optional<User> findOneWithDiscussions(int id);
+
+    Optional<User> findOneWithDiscussionsAndAuditorium(int id);
+
     Optional<User> findByEmail(String email);
 
     void update(User user);

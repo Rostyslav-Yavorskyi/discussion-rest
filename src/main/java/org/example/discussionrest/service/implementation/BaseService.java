@@ -23,8 +23,24 @@ public abstract class BaseService {
         return discussionDao.findOne(id).orElseThrow(() -> createDiscussionNotFoundException(id));
     }
 
+    protected Discussion findDiscussionByIdWithAuditoriumOrElseThrowException(int id) throws DiscussionNotFoundException {
+        return discussionDao.findOneWithAuditorium(id).orElseThrow(() -> createDiscussionNotFoundException(id));
+    }
+
+    protected Discussion findDiscussionByIdWithUsersOrElseThrowException(int id) throws DiscussionNotFoundException {
+        return discussionDao.findOneWithUsers(id).orElseThrow(() -> createDiscussionNotFoundException(id));
+    }
+
     protected User findUserByIdOrElseThrowException(int id) throws UserNotFoundException {
         return userDao.findOne(id).orElseThrow(() -> createUserNotFoundException(id));
+    }
+
+    protected User findUserByIdWithDiscussionsOrElseThrowException(int id) throws UserNotFoundException {
+        return userDao.findOneWithDiscussions(id).orElseThrow(() -> createUserNotFoundException(id));
+    }
+
+    protected User findUserByIdWithDiscussionsAndAuditoriumOrElseThrowException(int id) throws UserNotFoundException {
+        return userDao.findOneWithDiscussionsAndAuditorium(id).orElseThrow(() -> createUserNotFoundException(id));
     }
 
     protected Auditorium findAuditoriumByIdOrElseThrowException(int id) throws AuditoriumNotFoundException {

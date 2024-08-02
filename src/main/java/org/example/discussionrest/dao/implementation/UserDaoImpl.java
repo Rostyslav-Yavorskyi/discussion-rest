@@ -4,9 +4,11 @@ import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import org.example.discussionrest.dao.UserDao;
 import org.example.discussionrest.entity.User;
+import org.hibernate.graph.GraphSemantic;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -28,6 +30,18 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Optional<User> findOne(int id) {
         return Optional.ofNullable(entityManager.find(User.class, id));
+    }
+
+    @Override
+    public Optional<User> findOneWithDiscussions(int id) {
+        Map<String, Object> properties = Map.of(GraphSemantic.LOAD.getJakartaHintName(), entityManager.getEntityGraph("withDiscussions"));
+        return Optional.ofNullable(entityManager.find(User.class, id, properties));
+    }
+
+    @Override
+    public Optional<User> findOneWithDiscussionsAndAuditorium(int id) {
+        Map<String, Object> properties = Map.of(GraphSemantic.LOAD.getJakartaHintName(), entityManager.getEntityGraph("withDiscussionsAndAuditorium"));
+        return Optional.ofNullable(entityManager.find(User.class, id, properties));
     }
 
     @Override

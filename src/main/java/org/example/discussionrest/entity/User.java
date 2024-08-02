@@ -2,15 +2,26 @@ package org.example.discussionrest.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @ToString(exclude = {"password", "discussions"})
+@EqualsAndHashCode(exclude = "discussions")
 @Entity
 @Table(name = "user")
+@NamedEntityGraph(
+        name = "withDiscussions",
+        attributeNodes = @NamedAttributeNode("discussions")
+)
+@NamedEntityGraph(
+        name = "withDiscussionsAndAuditorium",
+        attributeNodes = @NamedAttributeNode(value = "discussions", subgraph = "discussions"),
+        subgraphs = @NamedSubgraph(name = "discussions", attributeNodes = @NamedAttributeNode("auditorium"))
+)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +48,7 @@ public class User {
             name = "user_discussion",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "discussion_id"))
-    private List<Discussion> discussions = new ArrayList<>();
+    private Set<Discussion> discussions = new HashSet<>();
 
     public void addDiscussion(Discussion discussion) {
         discussions.add(discussion);
