@@ -2,8 +2,13 @@ package org.example.discussionrest.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
+@ToString(exclude = "users")
 @Entity
 @Table(name = "discussion")
 public class Discussion {
@@ -14,7 +19,10 @@ public class Discussion {
     @Column(name = "topic", nullable = false)
     private String topic;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "auditorium_id", nullable = false)
-    Auditorium auditorium;
+    private Auditorium auditorium;
+
+    @ManyToMany(mappedBy = "discussions")
+    private List<User> users = new ArrayList<>();
 }

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@ToString(exclude = "password")
+@ToString(exclude = {"password", "discussions"})
 @Entity
 @Table(name = "user")
 public class User {
@@ -40,10 +40,12 @@ public class User {
     private List<Discussion> discussions = new ArrayList<>();
 
     public void addDiscussion(Discussion discussion) {
+        discussion.getUsers().add(this);
         discussions.add(discussion);
     }
 
     public boolean removeDiscussion(Discussion discussion) {
+        discussion.getUsers().remove(this);
         return discussions.remove(discussion);
     }
 

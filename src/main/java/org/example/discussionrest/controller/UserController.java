@@ -8,6 +8,7 @@ import org.example.discussionrest.exception.UserAlreadyJoinedToDiscussionExcepti
 import org.example.discussionrest.exception.UserAlreadyRegisteredException;
 import org.example.discussionrest.exception.UserNotFoundException;
 import org.example.discussionrest.mapper.UserMapper;
+import org.example.discussionrest.service.DiscussionService;
 import org.example.discussionrest.service.JwtService;
 import org.example.discussionrest.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ public class UserController {
     private final JwtService jwtService;
     private final UserService userService;
     private final UserMapper userMapper;
+    private final DiscussionService discussionService;
 
     @PostMapping("/login")
     public TokenReadDto login(@RequestBody UserLoginDto userLoginDto) throws UsernameNotFoundException {
@@ -53,6 +55,19 @@ public class UserController {
     @PostMapping("/discussion/{id}")
     public void joinToDiscussion(@PathVariable int id) throws DiscussionNotFoundException, UserAlreadyJoinedToDiscussionException {
         userService.joinToDiscussion(id);
+    }
+
+    @GetMapping("/discussion")
+    public List<DiscussionReadDto> findDiscussions() throws UserNotFoundException {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(user);
+        return discussionService.findAllByUserId(user.getId());
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/{id}/discussion")
+    public List<DiscussionReadDto> findDiscussions(@PathVariable int id) throws UserNotFoundException {
+        return discussionService.findAllByUserId(id);
     }
 
     @GetMapping("/me")

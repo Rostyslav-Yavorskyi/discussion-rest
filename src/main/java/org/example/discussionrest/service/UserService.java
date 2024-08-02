@@ -16,6 +16,7 @@ public interface UserService {
 
     void register(UserRegisterDto userRegisterDto) throws UserAlreadyRegisteredException;
     List<UserReadDto> findAll();
+    List<UserReadDto> findAllByDiscussionId(int discussionId) throws DiscussionNotFoundException;
     UserReadDto findOne(int id) throws UserNotFoundException;
     User findByEmail(String email) throws UsernameNotFoundException;
     void update(int id, UserUpdateDto userUpdateDto) throws UserNotFoundException;

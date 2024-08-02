@@ -43,6 +43,11 @@ public class UserServiceImpl extends BaseService implements UserService {
     }
 
     @Override
+    public List<UserReadDto> findAllByDiscussionId(int discussionId) throws DiscussionNotFoundException {
+        return userMapper.toReadDto(findDiscussionByIdOrElseThrowException(discussionId).getUsers());
+    }
+
+    @Override
     public UserReadDto findOne(int id) throws UserNotFoundException {
         User user = findUserByIdOrElseThrowException(id);
         return userMapper.toReadDto(user);

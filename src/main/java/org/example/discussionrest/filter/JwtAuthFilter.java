@@ -1,6 +1,7 @@
 package org.example.discussionrest.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -58,7 +59,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (UsernameNotFoundException ex) {
             handleException(globalExceptionHandler::handleUsernameNotFoundException, ex, response);
-        } catch (TokenExpiredException ex) {
+        } catch (TokenExpiredException | ExpiredJwtException ex) {
             handleException(globalExceptionHandler::handleTokenExpiredException, ex, response);
         }
     }

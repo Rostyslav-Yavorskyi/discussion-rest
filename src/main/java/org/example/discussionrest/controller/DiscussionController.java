@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import org.example.discussionrest.dto.DiscussionCreateDto;
 import org.example.discussionrest.dto.DiscussionReadDto;
 import org.example.discussionrest.dto.DiscussionUpdateDto;
+import org.example.discussionrest.dto.UserReadDto;
 import org.example.discussionrest.exception.AuditoriumNotFoundException;
 import org.example.discussionrest.exception.DiscussionNotFoundException;
 import org.example.discussionrest.service.DiscussionService;
+import org.example.discussionrest.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import java.util.List;
 public class DiscussionController {
 
     private final DiscussionService discussionService;
+    private final UserService userService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
@@ -35,6 +38,11 @@ public class DiscussionController {
     @GetMapping("/{id}")
     public DiscussionReadDto findOne(@PathVariable int id) throws DiscussionNotFoundException {
         return discussionService.findOne(id);
+    }
+
+    @GetMapping("/{id}/user")
+    public List<UserReadDto> findUsers(@PathVariable int id) throws DiscussionNotFoundException {
+        return userService.findAllByDiscussionId(id);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

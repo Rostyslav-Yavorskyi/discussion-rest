@@ -9,6 +9,7 @@ import org.example.discussionrest.entity.Auditorium;
 import org.example.discussionrest.entity.Discussion;
 import org.example.discussionrest.exception.AuditoriumNotFoundException;
 import org.example.discussionrest.exception.DiscussionNotFoundException;
+import org.example.discussionrest.exception.UserNotFoundException;
 import org.example.discussionrest.mapper.DiscussionMapper;
 import org.example.discussionrest.service.DiscussionService;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,11 @@ public class DiscussionServiceImpl extends BaseService implements DiscussionServ
     @Override
     public List<DiscussionReadDto> findAll() {
         return discussionMapper.toReadDto(discussionDao.findAll());
+    }
+
+    @Override
+    public List<DiscussionReadDto> findAllByUserId(int userId) throws UserNotFoundException {
+        return discussionMapper.toReadDto(findUserByIdOrElseThrowException(userId).getDiscussions());
     }
 
     @Override
