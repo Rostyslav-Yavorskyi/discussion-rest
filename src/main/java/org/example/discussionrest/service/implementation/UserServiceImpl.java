@@ -2,6 +2,7 @@ package org.example.discussionrest.service.implementation;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.example.discussionrest.dto.UserInternalDto;
 import org.example.discussionrest.dto.UserReadDto;
 import org.example.discussionrest.dto.UserRegisterDto;
 import org.example.discussionrest.dto.UserUpdateDto;
@@ -55,8 +56,9 @@ public class UserServiceImpl extends BaseService implements UserService {
 
     @Override
     @Transactional
-    public User findByEmail(String email) throws UsernameNotFoundException {
-        return userDao.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Authentication failed"));
+    public UserInternalDto findByEmail(String email) throws UsernameNotFoundException {
+        User user = userDao.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Authentication failed"));
+        return userMapper.toInternalDto(user);
     }
 
     @Override
@@ -68,9 +70,10 @@ public class UserServiceImpl extends BaseService implements UserService {
 
     @Override
     @Transactional
-    public void joinToDiscussion(int discussionId) throws DiscussionNotFoundException, UserAlreadyJoinedToDiscussionException {
+    public void joinToDiscussion(int discussionId) throws DiscussionNotFoundException, UserAlreadyJoinedToDiscussionException, UserNotFoundException {
         Discussion discussion = findDiscussionByIdOrElseThrowException(discussionId);
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserInternalDto userInternalDto = (UserInternalDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = findUserByIdOrElseThrowException(userInternalDto.getId());
         if (user.discussionExists(discussion)) {
             throw createUserAlreadyJoinedToDiscussionException();
         }
@@ -80,9 +83,10 @@ public class UserServiceImpl extends BaseService implements UserService {
 
     @Override
     @Transactional
-    public void leaveFromDiscussion(int discussionId) throws DiscussionNotFoundException {
+    public void leaveFromDiscussion(int discussionId) throws DiscussionNotFoundException, UserNotFoundException {
         Discussion discussion = findDiscussionByIdOrElseThrowException(discussionId);
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserInternalDto userInternalDto = (UserInternalDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = findUserByIdOrElseThrowException(userInternalDto.getId());
         boolean deleted = user.removeDiscussion(discussion);
         if (!deleted) {
             throw createDiscussionNotFoundExceptionWithUserId(discussion.getId(), user.getId());

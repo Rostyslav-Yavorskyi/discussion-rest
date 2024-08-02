@@ -1,9 +1,9 @@
 package org.example.discussionrest.service;
 
+import org.example.discussionrest.dto.UserInternalDto;
 import org.example.discussionrest.dto.UserReadDto;
 import org.example.discussionrest.dto.UserRegisterDto;
 import org.example.discussionrest.dto.UserUpdateDto;
-import org.example.discussionrest.entity.User;
 import org.example.discussionrest.exception.DiscussionNotFoundException;
 import org.example.discussionrest.exception.UserAlreadyJoinedToDiscussionException;
 import org.example.discussionrest.exception.UserAlreadyRegisteredException;
@@ -18,9 +18,9 @@ public interface UserService {
     List<UserReadDto> findAll();
     List<UserReadDto> findAllByDiscussionId(int discussionId) throws DiscussionNotFoundException;
     UserReadDto findOne(int id) throws UserNotFoundException;
-    User findByEmail(String email) throws UsernameNotFoundException;
+    UserInternalDto findByEmail(String email) throws UsernameNotFoundException;
     void update(int id, UserUpdateDto userUpdateDto) throws UserNotFoundException;
-    void joinToDiscussion(int discussionId) throws DiscussionNotFoundException, UserAlreadyJoinedToDiscussionException;
-    void leaveFromDiscussion(int discussionId) throws DiscussionNotFoundException;
+    void joinToDiscussion(int discussionId) throws DiscussionNotFoundException, UserAlreadyJoinedToDiscussionException, UserNotFoundException;
+    void leaveFromDiscussion(int discussionId) throws DiscussionNotFoundException, UserNotFoundException;
     void delete(int id) throws UserNotFoundException;
 }

@@ -3,9 +3,9 @@ package org.example.discussionrest.service.implementation;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.example.discussionrest.dto.TokenReadDto;
+import org.example.discussionrest.dto.UserInternalDto;
 import org.example.discussionrest.dto.UserLoginDto;
 import org.example.discussionrest.dto.UserRegisterDto;
-import org.example.discussionrest.entity.User;
 import org.example.discussionrest.service.JwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -62,7 +62,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public boolean isTokenInvalid(String token, User user) {
+    public boolean isTokenInvalid(String token, UserInternalDto user) {
         final String email = extractEmail(token);
         return isTokenExpired(token) || !email.equals(user.getEmail());
     }

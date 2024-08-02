@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.example.discussionrest.controller.GlobalExceptionHandler;
 import org.example.discussionrest.dto.ExceptionDto;
-import org.example.discussionrest.entity.User;
+import org.example.discussionrest.dto.UserInternalDto;
 import org.example.discussionrest.exception.TokenExpiredException;
 import org.example.discussionrest.service.JwtService;
 import org.example.discussionrest.service.UserService;
@@ -50,7 +50,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String email = jwtService.extractEmail(jwt);
 
             if (needAuthentication(email)) {
-                User user = userService.findByEmail(email);
+                UserInternalDto user = userService.findByEmail(email);
                 if (jwtService.isTokenInvalid(jwt, user)) {
                     throw new TokenExpiredException();
                 }
@@ -84,14 +84,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         return StringUtils.isNotEmpty(email);
     }
 
-    private void applyAuthentication(HttpServletRequest request, User user) {
+    private void applyAuthentication(HttpServletRequest request, UserInternalDto user) {
         Collection<? extends GrantedAuthority> authorities = getAuthorities(user);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, authorities);
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(User user) {
+    private Collection<? extends GrantedAuthority> getAuthorities(UserInternalDto user) {
         return Collections.singletonList(() -> user.getRole().name());
     }
 
