@@ -30,7 +30,7 @@ public class UserServiceImpl extends BaseService implements UserService {
     @Transactional
     public void register(UserRegisterDto userRegisterDto) throws UserAlreadyRegisteredException {
         if (userDao.findByEmail(userRegisterDto.getEmail()).isPresent()) {
-            throw createUserAlreadyRegisteredException(userRegisterDto.getEmail());
+            throw exceptionUtil.createUserAlreadyRegisteredException(userRegisterDto.getEmail());
         }
 
         User user = userMapper.toEntity(userRegisterDto);
@@ -45,12 +45,12 @@ public class UserServiceImpl extends BaseService implements UserService {
 
     @Override
     public List<UserReadDto> findAllByDiscussionId(int discussionId) throws DiscussionNotFoundException {
-        return userMapper.toReadDto(findDiscussionByIdWithUsersOrElseThrowException(discussionId).getUsers());
+        return userMapper.toReadDto(findDiscussionByIdOrElseThrowException(discussionId, FetchType.WITH_USERS).getUsers());
     }
 
     @Override
     public UserReadDto findOne(int id) throws UserNotFoundException {
-        User user = findUserByIdOrElseThrowException(id);
+        User user = findUserByIdOrElseThrowException(id, FetchType.DEFAULT);
         return userMapper.toReadDto(user);
     }
 
@@ -64,18 +64,18 @@ public class UserServiceImpl extends BaseService implements UserService {
     @Override
     @Transactional
     public void update(int id, UserUpdateDto userUpdateDto) throws UserNotFoundException {
-        User user = findUserByIdOrElseThrowException(id);
+        User user = findUserByIdOrElseThrowException(id, FetchType.DEFAULT);
         userMapper.update(user, userUpdateDto);
     }
 
     @Override
     @Transactional
     public void joinToDiscussion(int discussionId) throws DiscussionNotFoundException, UserAlreadyJoinedToDiscussionException, UserNotFoundException {
-        Discussion discussion = findDiscussionByIdOrElseThrowException(discussionId);
+        Discussion discussion = findDiscussionByIdOrElseThrowException(discussionId, FetchType.DEFAULT);
         UserInternalDto userInternalDto = (UserInternalDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = findUserByIdWithDiscussionsOrElseThrowException(userInternalDto.getId());
+        User user = findUserByIdOrElseThrowException(userInternalDto.getId(), FetchType.WITH_DISCUSSIONS);
         if (user.discussionExists(discussion)) {
-            throw createUserAlreadyJoinedToDiscussionException();
+            throw exceptionUtil.createUserAlreadyJoinedToDiscussionException();
         }
         user.addDiscussion(discussion);
     }
@@ -83,12 +83,12 @@ public class UserServiceImpl extends BaseService implements UserService {
     @Override
     @Transactional
     public void leaveFromDiscussion(int discussionId) throws DiscussionNotFoundException, UserNotFoundException {
-        Discussion discussion = findDiscussionByIdOrElseThrowException(discussionId);
+        Discussion discussion = findDiscussionByIdOrElseThrowException(discussionId, FetchType.DEFAULT);
         UserInternalDto userInternalDto = (UserInternalDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = findUserByIdWithDiscussionsOrElseThrowException(userInternalDto.getId());
+        User user = findUserByIdOrElseThrowException(userInternalDto.getId(), FetchType.WITH_DISCUSSIONS);
         boolean deleted = user.removeDiscussion(discussion);
         if (!deleted) {
-            throw createDiscussionNotFoundExceptionWithUserId(discussion.getId(), user.getId());
+            throw exceptionUtil.createDiscussionNotFoundExceptionWithUserId(discussion.getId(), user.getId());
         }
     }
 
@@ -96,7 +96,7 @@ public class UserServiceImpl extends BaseService implements UserService {
     @Transactional
     public void delete(int id) throws UserNotFoundException {
         if (!userDao.delete(id)) {
-            throw createUserNotFoundException(id);
+            throw exceptionUtil.createUserNotFoundException(id);
         }
     }
 }

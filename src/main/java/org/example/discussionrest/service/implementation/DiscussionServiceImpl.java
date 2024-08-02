@@ -40,19 +40,19 @@ public class DiscussionServiceImpl extends BaseService implements DiscussionServ
 
     @Override
     public List<DiscussionReadDto> findAllByUserId(int userId) throws UserNotFoundException {
-        return discussionMapper.toReadDto(findUserByIdWithDiscussionsAndAuditoriumOrElseThrowException(userId).getDiscussions());
+        return discussionMapper.toReadDto(findUserByIdOrElseThrowException(userId, FetchType.WITH_DISCUSSIONS_AND_AUDITORIUM).getDiscussions());
     }
 
     @Override
     public DiscussionReadDto findOne(int id) throws DiscussionNotFoundException {
-        Discussion discussion = findDiscussionByIdWithAuditoriumOrElseThrowException(id);
+        Discussion discussion = findDiscussionByIdOrElseThrowException(id, FetchType.WITH_AUDITORIUM);
         return discussionMapper.toReadDto(discussion);
     }
 
     @Override
     @Transactional
     public void update(int id, DiscussionUpdateDto discussionUpdateDto) throws DiscussionNotFoundException, AuditoriumNotFoundException {
-        Discussion discussion = findDiscussionByIdWithAuditoriumOrElseThrowException(id);
+        Discussion discussion = findDiscussionByIdOrElseThrowException(id, FetchType.WITH_AUDITORIUM);
         if (discussion.getAuditorium().getId() != discussionUpdateDto.getAuditoriumId()) {
             Auditorium auditorium = findAuditoriumByIdOrElseThrowException(discussionUpdateDto.getAuditoriumId());
             discussion.setAuditorium(auditorium);
@@ -65,7 +65,7 @@ public class DiscussionServiceImpl extends BaseService implements DiscussionServ
     @Transactional
     public void delete(int id) throws DiscussionNotFoundException {
         if (!discussionDao.delete(id)) {
-            throw createDiscussionNotFoundException(id);
+            throw exceptionUtil.createDiscussionNotFoundException(id);
         }
     }
 }

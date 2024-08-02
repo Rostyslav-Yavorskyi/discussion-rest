@@ -62,7 +62,7 @@ public class AuditoriumServiceImpl extends BaseService implements AuditoriumServ
     @CacheEvict("auditorium")
     public void delete(int id) throws AuditoriumNotFoundException {
         if (!auditoriumDao.delete(id)) {
-            throw createAuditoriumNotFoundException(id);
+            throw exceptionUtil.createAuditoriumNotFoundException(id);
         }
     }
 }

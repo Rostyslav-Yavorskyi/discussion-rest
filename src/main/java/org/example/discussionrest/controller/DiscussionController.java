@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/discussion")
+@RequestMapping("/discussions")
 @AllArgsConstructor
 public class DiscussionController {
 
@@ -40,7 +40,7 @@ public class DiscussionController {
         return discussionService.findOne(id);
     }
 
-    @GetMapping("/{id}/user")
+    @GetMapping("/{id}/users")
     public List<UserReadDto> findUsers(@PathVariable int id) throws DiscussionNotFoundException {
         return userService.findAllByDiscussionId(id);
     }

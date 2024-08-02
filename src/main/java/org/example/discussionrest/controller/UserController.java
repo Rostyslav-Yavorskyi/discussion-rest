@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -49,19 +49,19 @@ public class UserController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping("/discussion/{id}")
+    @PostMapping("/discussions/{id}")
     public void joinToDiscussion(@PathVariable int id) throws DiscussionNotFoundException, UserAlreadyJoinedToDiscussionException, UserNotFoundException {
         userService.joinToDiscussion(id);
     }
 
-    @GetMapping("/discussion")
+    @GetMapping("/discussions")
     public List<DiscussionReadDto> findDiscussions() throws UserNotFoundException {
         UserInternalDto user = (UserInternalDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return discussionService.findAllByUserId(user.getId());
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/{id}/discussion")
+    @GetMapping("/{id}/discussions")
     public List<DiscussionReadDto> findDiscussions(@PathVariable int id) throws UserNotFoundException {
         return discussionService.findAllByUserId(id);
     }
@@ -99,7 +99,7 @@ public class UserController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/discussion/{id}")
+    @DeleteMapping("/discussions/{id}")
     public void leaveFromDiscussion(@PathVariable int id) throws DiscussionNotFoundException, UserNotFoundException {
         userService.leaveFromDiscussion(id);
     }

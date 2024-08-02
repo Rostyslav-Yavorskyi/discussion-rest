@@ -19,7 +19,6 @@ public class DiscussionDaoImpl implements DiscussionDao {
 
     @Override
     public void insert(Discussion discussion) {
-        System.out.println(discussion);
         entityManager.persist(discussion);
     }
 
