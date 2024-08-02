@@ -11,8 +11,12 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {AuditoriumMapper.class})
 public interface DiscussionMapper {
+
     Discussion toEntity(DiscussionCreateDto discussionCreateDto);
+
     DiscussionReadDto toReadDto(Discussion discussion);
+
     List<DiscussionReadDto> toReadDto(List<Discussion> discussion);
+
     void update(@MappingTarget Discussion discussion, DiscussionUpdateDto discussionUpdateDto);
 }
