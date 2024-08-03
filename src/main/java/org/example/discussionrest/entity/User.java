@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +24,7 @@ import java.util.Set;
         attributeNodes = @NamedAttributeNode(value = "discussions", subgraph = "discussions"),
         subgraphs = @NamedSubgraph(name = "discussions", attributeNodes = @NamedAttributeNode("auditorium"))
 )
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
