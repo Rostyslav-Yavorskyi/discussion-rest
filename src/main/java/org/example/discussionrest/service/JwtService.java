@@ -1,18 +1,14 @@
 package org.example.discussionrest.service;
 
 import org.example.discussionrest.dto.TokenReadDto;
-import org.example.discussionrest.dto.UserInternalDto;
-import org.example.discussionrest.dto.UserLoginDto;
-import org.example.discussionrest.dto.UserRegisterDto;
+import org.example.discussionrest.entity.User;
 
 public interface JwtService {
 
-    String extractEmail(String token);
+    int extractId(String token);
 
-    TokenReadDto generateToken(UserLoginDto userLoginDto);
+    TokenReadDto generateToken(User user);
 
-    TokenReadDto generateToken(UserRegisterDto userRegisterDto);
-
-    boolean isTokenInvalid(String token, UserInternalDto User);
+    boolean isTokenInvalid(String token);
 
 }

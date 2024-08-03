@@ -18,6 +18,10 @@ public class ExceptionUtil {
         return new UserNotFoundException(String.format("User not found with id %d", id));
     }
 
+    public UserNotFoundException createUserNotFoundException(String email) {
+        return new UserNotFoundException(String.format("User not found with email %s", email));
+    }
+
     public DiscussionNotFoundException createDiscussionNotFoundExceptionWithUserId(int id, int userId) {
         return new DiscussionNotFoundException(String.format("Discussion not found with id %d and userId %d", id, userId));
     }

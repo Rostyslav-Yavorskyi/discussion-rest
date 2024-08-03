@@ -3,9 +3,7 @@ package org.example.discussionrest.service.implementation;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.example.discussionrest.dto.TokenReadDto;
-import org.example.discussionrest.dto.UserInternalDto;
-import org.example.discussionrest.dto.UserLoginDto;
-import org.example.discussionrest.dto.UserRegisterDto;
+import org.example.discussionrest.entity.User;
 import org.example.discussionrest.service.JwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,8 +24,8 @@ public class JwtServiceImpl implements JwtService {
     private String ALGORITHM;
 
     @Override
-    public String extractEmail(String token) {
-        return extractClaim(token, Claims::getSubject);
+    public int extractId(String token) {
+        return Integer.parseInt(extractClaim(token, Claims::getSubject));
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolvers) {
@@ -44,13 +42,8 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public TokenReadDto generateToken(UserRegisterDto userRegisterDto) {
-        return new TokenReadDto(createToken(userRegisterDto.getEmail()));
-    }
-
-    @Override
-    public TokenReadDto generateToken(UserLoginDto userLoginDto) {
-        return new TokenReadDto(createToken(userLoginDto.getEmail()));
+    public TokenReadDto generateToken(User user) {
+        return new TokenReadDto(createToken(String.valueOf(user.getId())));
     }
 
     private String createToken(String subject) {
@@ -62,9 +55,8 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public boolean isTokenInvalid(String token, UserInternalDto user) {
-        final String email = extractEmail(token);
-        return isTokenExpired(token) || !email.equals(user.getEmail());
+    public boolean isTokenInvalid(String token) {
+        return isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

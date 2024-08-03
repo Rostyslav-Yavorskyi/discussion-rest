@@ -11,21 +11,14 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.example.discussionrest.controller.GlobalExceptionHandler;
 import org.example.discussionrest.dto.ExceptionDto;
-import org.example.discussionrest.dto.UserInternalDto;
 import org.example.discussionrest.exception.TokenExpiredException;
-import org.example.discussionrest.service.JwtService;
-import org.example.discussionrest.service.UserService;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.example.discussionrest.exception.UserNotFoundException;
+import org.example.discussionrest.service.AuthService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Function;
 
 @Component
@@ -34,8 +27,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     public static final String BEARER_PREFIX = "Bearer ";
     public static final String HEADER_NAME = "Authorization";
-    private final JwtService jwtService;
-    private final UserService userService;
+    private final AuthService authService;
     private final GlobalExceptionHandler globalExceptionHandler;
 
     @Override
@@ -46,21 +38,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-            String jwt = getJwt(authHeader);
-            String email = jwtService.extractEmail(jwt);
-
-            if (needAuthentication(email)) {
-                UserInternalDto user = userService.findByEmail(email);
-                if (jwtService.isTokenInvalid(jwt, user)) {
-                    throw new TokenExpiredException();
-                }
-                applyAuthentication(request, user);
-            }
+            String token = getJwt(authHeader);
+            authService.authenticate(token);
             filterChain.doFilter(request, response);
         } catch (UsernameNotFoundException ex) {
             handleException(globalExceptionHandler::handleUsernameNotFoundException, ex, response);
         } catch (TokenExpiredException | ExpiredJwtException ex) {
             handleException(globalExceptionHandler::handleTokenExpiredException, ex, response);
+        } catch (UserNotFoundException ex) {
+            handleException(globalExceptionHandler::handleRecordNotFoundException, ex, response);
         }
     }
 
@@ -74,25 +60,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private String getJwt(String authHeader) {
         return authHeader.substring(BEARER_PREFIX.length());
-    }
-
-    private boolean needAuthentication(String email) {
-        return isEmailValid(email) && SecurityContextHolder.getContext().getAuthentication() == null;
-    }
-
-    private boolean isEmailValid(String email) {
-        return StringUtils.isNotEmpty(email);
-    }
-
-    private void applyAuthentication(HttpServletRequest request, UserInternalDto user) {
-        Collection<? extends GrantedAuthority> authorities = getAuthorities(user);
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, authorities);
-        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-    }
-
-    private Collection<? extends GrantedAuthority> getAuthorities(UserInternalDto user) {
-        return Collections.singletonList(() -> user.getRole().name());
     }
 
     private <T extends Exception> void handleException(Function<T, ExceptionDto> exceptionHandlerFunction, T exception, HttpServletResponse response) throws IOException {
