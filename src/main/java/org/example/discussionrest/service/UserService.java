@@ -1,9 +1,6 @@
 package org.example.discussionrest.service;
 
-import org.example.discussionrest.dto.UserInternalDto;
-import org.example.discussionrest.dto.UserReadDto;
-import org.example.discussionrest.dto.UserRegisterDto;
-import org.example.discussionrest.dto.UserUpdateDto;
+import org.example.discussionrest.dto.*;
 import org.example.discussionrest.exception.DiscussionNotFoundException;
 import org.example.discussionrest.exception.UserAlreadyJoinedToDiscussionException;
 import org.example.discussionrest.exception.UserAlreadyRegisteredException;
@@ -16,7 +13,7 @@ public interface UserService {
 
     void register(UserRegisterDto userRegisterDto) throws UserAlreadyRegisteredException;
 
-    List<UserReadDto> findAll();
+    List<UserReadDto> findAll(SortDto sortDto);
 
     List<UserReadDto> findAllByDiscussionId(int discussionId) throws DiscussionNotFoundException;
 

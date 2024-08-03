@@ -1,5 +1,6 @@
 package org.example.discussionrest.dao;
 
+import org.example.discussionrest.dto.SortDto;
 import org.example.discussionrest.entity.User;
 
 import java.util.List;
@@ -9,7 +10,7 @@ public interface UserDao {
 
     void insert(User user);
 
-    List<User> findAll();
+    List<User> findAll(SortDto sortDto);
 
     Optional<User> findOne(int id);
 

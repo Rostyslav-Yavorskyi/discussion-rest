@@ -2,10 +2,7 @@ package org.example.discussionrest.service.implementation;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.example.discussionrest.dto.UserInternalDto;
-import org.example.discussionrest.dto.UserReadDto;
-import org.example.discussionrest.dto.UserRegisterDto;
-import org.example.discussionrest.dto.UserUpdateDto;
+import org.example.discussionrest.dto.*;
 import org.example.discussionrest.entity.Discussion;
 import org.example.discussionrest.entity.User;
 import org.example.discussionrest.exception.DiscussionNotFoundException;
@@ -39,8 +36,8 @@ public class UserServiceImpl extends BaseService implements UserService {
     }
 
     @Override
-    public List<UserReadDto> findAll() {
-        return userMapper.toReadDto(userDao.findAll());
+    public List<UserReadDto> findAll(SortDto sortDto) {
+        return userMapper.toReadDto(userDao.findAll(sortDto));
     }
 
     @Override

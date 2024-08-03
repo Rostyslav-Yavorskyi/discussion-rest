@@ -9,6 +9,7 @@ import org.example.discussionrest.exception.UserNotFoundException;
 import org.example.discussionrest.service.DiscussionService;
 import org.example.discussionrest.service.JwtService;
 import org.example.discussionrest.service.UserService;
+import org.example.discussionrest.util.SortDtoBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +30,7 @@ public class UserController {
     private final JwtService jwtService;
     private final UserService userService;
     private final DiscussionService discussionService;
+    private final SortDtoBuilder sortDtoBuilder;
 
     @PostMapping("/login")
     public TokenReadDto login(@RequestBody UserLoginDto userLoginDto) throws UsernameNotFoundException {
@@ -74,8 +76,8 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
-    public List<UserReadDto> findAll() {
-        return userService.findAll();
+    public List<UserReadDto> findAll(@RequestParam(defaultValue = "+id") String sort) {
+        return userService.findAll(sortDtoBuilder.buildSortDto(sort));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
