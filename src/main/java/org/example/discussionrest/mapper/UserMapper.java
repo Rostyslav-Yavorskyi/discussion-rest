@@ -1,6 +1,5 @@
 package org.example.discussionrest.mapper;
 
-import org.example.discussionrest.dto.UserInternalDto;
 import org.example.discussionrest.dto.UserReadDto;
 import org.example.discussionrest.dto.UserRegisterDto;
 import org.example.discussionrest.dto.UserUpdateDto;
@@ -21,8 +20,6 @@ public interface UserMapper {
     List<UserReadDto> toReadDto(List<User> users);
 
     List<UserReadDto> toReadDto(Set<User> users);
-
-    UserInternalDto toInternalDto(User user);
 
     void update(@MappingTarget User user, UserUpdateDto userUpdateDto);
 }

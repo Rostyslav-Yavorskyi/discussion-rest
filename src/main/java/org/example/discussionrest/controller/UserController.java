@@ -2,12 +2,11 @@ package org.example.discussionrest.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.discussionrest.dto.DiscussionReadDto;
-import org.example.discussionrest.dto.UserInternalDto;
 import org.example.discussionrest.dto.UserReadDto;
 import org.example.discussionrest.dto.UserUpdateDto;
-import org.example.discussionrest.exception.DiscussionNotFoundException;
-import org.example.discussionrest.exception.UserAlreadyJoinedToDiscussionException;
+import org.example.discussionrest.entity.User;
 import org.example.discussionrest.exception.UserNotFoundException;
+import org.example.discussionrest.mapper.UserMapper;
 import org.example.discussionrest.service.DiscussionService;
 import org.example.discussionrest.service.UserService;
 import org.example.discussionrest.util.SortDtoBuilder;
@@ -25,17 +24,12 @@ public class UserController {
 
     private final UserService userService;
     private final DiscussionService discussionService;
+    private final UserMapper userMapper;
     private final SortDtoBuilder sortDtoBuilder;
-
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping("/discussions/{id}")
-    public void joinToDiscussion(@PathVariable int id) throws DiscussionNotFoundException, UserAlreadyJoinedToDiscussionException, UserNotFoundException {
-        userService.joinToDiscussion(id);
-    }
 
     @GetMapping("/discussions")
     public List<DiscussionReadDto> findDiscussions() throws UserNotFoundException {
-        UserInternalDto user = (UserInternalDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return discussionService.findAllByUserId(user.getId());
     }
 
@@ -46,9 +40,9 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public UserReadDto getMe() throws UserNotFoundException {
-        UserInternalDto user = (UserInternalDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userService.findOne(user.getId());
+    public UserReadDto getMe() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userMapper.toReadDto(user);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -75,11 +69,5 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable int id) throws UserNotFoundException {
         userService.delete(id);
-    }
-
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/discussions/{id}")
-    public void leaveFromDiscussion(@PathVariable int id) throws DiscussionNotFoundException, UserNotFoundException {
-        userService.leaveFromDiscussion(id);
     }
 }

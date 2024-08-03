@@ -7,6 +7,8 @@ import org.example.discussionrest.dto.DiscussionUpdateDto;
 import org.example.discussionrest.dto.UserReadDto;
 import org.example.discussionrest.exception.AuditoriumNotFoundException;
 import org.example.discussionrest.exception.DiscussionNotFoundException;
+import org.example.discussionrest.exception.UserAlreadyJoinedToDiscussionException;
+import org.example.discussionrest.exception.UserNotFoundException;
 import org.example.discussionrest.service.DiscussionService;
 import org.example.discussionrest.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -57,5 +59,17 @@ public class DiscussionController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable int id) throws DiscussionNotFoundException {
         discussionService.delete(id);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping("/{id}/join")
+    public void joinToDiscussion(@PathVariable int id) throws DiscussionNotFoundException, UserAlreadyJoinedToDiscussionException, UserNotFoundException {
+        userService.joinToDiscussion(id);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}/leave")
+    public void leaveFromDiscussion(@PathVariable int id) throws DiscussionNotFoundException, UserNotFoundException {
+        userService.leaveFromDiscussion(id);
     }
 }
