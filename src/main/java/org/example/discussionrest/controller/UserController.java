@@ -13,6 +13,7 @@ import org.example.discussionrest.util.SortDtoBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -60,7 +61,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    public void update(@PathVariable int id, @RequestBody UserUpdateDto userUpdateDto) throws UserNotFoundException {
+    public void update(@PathVariable int id, @RequestBody @Validated UserUpdateDto userUpdateDto) throws UserNotFoundException {
         userService.update(id, userUpdateDto);
     }
 

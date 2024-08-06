@@ -8,6 +8,7 @@ import org.example.discussionrest.exception.AuditoriumNotFoundException;
 import org.example.discussionrest.service.AuditoriumService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class AuditoriumController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public AuditoriumReadDto insert(@RequestBody AuditoriumCreateDto auditoriumCreateDto) {
+    public AuditoriumReadDto insert(@RequestBody @Validated AuditoriumCreateDto auditoriumCreateDto) {
         return auditoriumService.insertIfNotExists(auditoriumCreateDto);
     }
 
@@ -41,7 +42,7 @@ public class AuditoriumController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    public void update(@PathVariable int id, @RequestBody AuditoriumUpdateDto auditoriumUpdateDto) throws AuditoriumNotFoundException {
+    public void update(@PathVariable int id, @RequestBody @Validated AuditoriumUpdateDto auditoriumUpdateDto) throws AuditoriumNotFoundException {
         auditoriumService.update(id, auditoriumUpdateDto);
     }
 

@@ -1,6 +1,7 @@
 package org.example.discussionrest.controller;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.validation.ValidationException;
 import org.example.discussionrest.dto.ExceptionDto;
 import org.example.discussionrest.exception.RecordNotFoundException;
 import org.example.discussionrest.exception.TokenExpiredException;
@@ -44,6 +45,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({TokenExpiredException.class, ExpiredJwtException.class})
     public @ResponseBody ExceptionDto handleTokenExpiredException(Exception ex) {
         return buildExceptionDto(ex, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ValidationException.class)
+    public @ResponseBody ExceptionDto handleValidationException(ValidationException ex) {
+        return buildExceptionDto(ex, HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

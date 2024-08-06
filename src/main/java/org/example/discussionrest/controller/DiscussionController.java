@@ -13,6 +13,7 @@ import org.example.discussionrest.service.DiscussionService;
 import org.example.discussionrest.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class DiscussionController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public DiscussionReadDto insert(@RequestBody DiscussionCreateDto discussionCreateDto) throws AuditoriumNotFoundException {
+    public DiscussionReadDto insert(@RequestBody @Validated DiscussionCreateDto discussionCreateDto) throws AuditoriumNotFoundException {
         return discussionService.insert(discussionCreateDto);
     }
 
@@ -50,7 +51,7 @@ public class DiscussionController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    public void update(@PathVariable int id, @RequestBody DiscussionUpdateDto discussionUpdateDto) throws DiscussionNotFoundException, AuditoriumNotFoundException {
+    public void update(@PathVariable int id, @RequestBody @Validated DiscussionUpdateDto discussionUpdateDto) throws DiscussionNotFoundException, AuditoriumNotFoundException {
         discussionService.update(id, discussionUpdateDto);
     }
 
