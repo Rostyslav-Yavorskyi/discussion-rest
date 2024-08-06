@@ -1,5 +1,6 @@
 package org.example.discussionrest.service.implementation;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.example.discussionrest.dto.TokenReadDto;
 import org.example.discussionrest.dto.UserLoginDto;
@@ -30,6 +31,7 @@ public class AuthServiceImpl extends BaseService implements AuthService {
     private final ExceptionUtil exceptionUtil;
 
     @Override
+    @Transactional
     public TokenReadDto register(UserRegisterDto userRegisterDto) throws UserAlreadyRegisteredException {
         if (userDao.findByEmail(userRegisterDto.getEmail()).isPresent()) {
             throw exceptionUtil.createUserAlreadyRegisteredException(userRegisterDto.getEmail());
