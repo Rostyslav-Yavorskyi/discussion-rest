@@ -1,24 +1,37 @@
+# Discussion REST
+This is an example RESTful API written in Java and Spring Framework.
+The project uses Spring Boot, Spring AOP, Lombok, Hibernate, MySQL, Redis for second-level cache.
+JWT authentication is also implemented.
+
 ## In order to run the app execute the following:
 
 ### Docker
-1. `git clone https://github.com/Rostyslav-Yavorskyi/discussion-rest.git`
-2. `cd discussion-rest/.docker`
-3. `docker-compose up`
+```
+git clone https://github.com/Rostyslav-Yavorskyi/discussion-rest.git
+cd discussion-rest/.docker
+docker-compose up
+```
 
 ### Maven
 
-1. `git clone https://github.com/Rostyslav-Yavorskyi/discussion-rest.git`
-2. `cd discussion-rest`
-3. Install mysql with schema.sql and redis
-4. Set environment variables
-    - MYSQL_HOST
-    - MYSQL_PORT
-    - MYSQL_USER
-    - MYSQL_PASSWORD
-    - REDIS_HOST
-    - REDIS_PORT
-    - JWT_KEY
-5. `./mvnw spring-boot:run`
+Install mysql and execute schema.sql.
+Install redis.
+
+Set the following environment variables:
+   - MYSQL_HOST
+   - MYSQL_PORT
+   - MYSQL_USER
+   - MYSQL_PASSWORD
+   - REDIS_HOST
+   - REDIS_PORT
+   - JWT_KEY
+
+```
+apt install openjdk-17-jdk git -y
+git clone https://github.com/Rostyslav-Yavorskyi/discussion-rest.git
+cd discussion-rest
+./mvnw spring-boot:run
+```
 
 ## Endpoints
 
