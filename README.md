@@ -1,3 +1,25 @@
+## In order to run the app execute the following:
+
+### Docker
+1. `https://github.com/Rostyslav-Yavorskyi/discussion-rest.git`
+2. `cd discussion-rest/.docker`
+3. `docker-compose up`
+
+### Maven
+
+1. `https://github.com/Rostyslav-Yavorskyi/discussion-rest.git`
+2. `cd discussion-rest`
+3. Install mysql with schema.sql and redis
+4. Set environment variables
+    - MYSQL_HOST
+    - MYSQL_PORT
+    - MYSQL_USER
+    - MYSQL_PASSWORD
+    - REDIS_HOST
+    - REDIS_PORT
+    - JWT_KEY
+5. `./mvnw spring-boot:run`
+
 ## Endpoints
 
 ### 1. Auth
