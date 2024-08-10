@@ -1,13 +1,13 @@
 ## In order to run the app execute the following:
 
 ### Docker
-1. `https://github.com/Rostyslav-Yavorskyi/discussion-rest.git`
+1. `git clone https://github.com/Rostyslav-Yavorskyi/discussion-rest.git`
 2. `cd discussion-rest/.docker`
 3. `docker-compose up`
 
 ### Maven
 
-1. `https://github.com/Rostyslav-Yavorskyi/discussion-rest.git`
+1. `git clone https://github.com/Rostyslav-Yavorskyi/discussion-rest.git`
 2. `cd discussion-rest`
 3. Install mysql with schema.sql and redis
 4. Set environment variables
@@ -23,6 +23,8 @@
 ## Endpoints
 
 ### 1. Auth
+
+Default admin: admin@gmail.com:adminpass
 
 `Register: POST http://localhost:8080/auth/register`
 
